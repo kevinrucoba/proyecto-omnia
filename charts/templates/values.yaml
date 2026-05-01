@@ -1,0 +1,10 @@
+replicaCount: 3 # Para alta disponibilidad de Omnia
+
+image:
+  repository: tu-usuario-docker/omnia-auth
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: LoadBalancer # Para que nos dé una IP pública
+  port: 80  

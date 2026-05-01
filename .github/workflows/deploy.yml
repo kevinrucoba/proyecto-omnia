@@ -1,0 +1,39 @@
+name: Omnia K8s CI/CD Deploy
+
+# Se ejecutará cada vez que hagas un "git push" a la rama main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 1. Checkout del código
+      uses: actions/checkout@v3
+
+    - name: 2. Simular Construcción de Imagen Docker
+      run: |
+        echo "Construyendo imagen Docker para Omnia..."
+        echo "docker build -t omnia-app:${{ github.sha }} ."
+
+    - name: 3. Instalar Helm en GitHub Actions
+      uses: azure/setup-helm@v3
+      with:
+        version: 'v3.12.0'
+
+    - name: 4. Configurar Kubeconfig (Conexión al Clúster)
+      run: |
+        echo "Simulando conexión al clúster de Kubernetes en AWS EKS..."
+        # aws eks update-kubeconfig --region us-east-1 --name omnia-cluster
+
+    - name: 5. Desplegar Microservicios usando Helm
+      run: |
+        echo "Ejecutando Helm Upgrade/Install..."
+        helm upgrade --install omnia-release ./charts/omnia-chart \
+          --set image.tag=${{ github.sha }} \
+          --set replicaCount=3
+          
+    - name: 6. Notificar estado del despliegue
+      run: echo "¡Despliegue de Omnia completado con éxito en el clúster!"
